@@ -7,23 +7,25 @@ using System.Net.Mail;
 using System.Text;
 using System.Threading.Tasks;
 using System.Configuration;
+using StockInfo.Entities;
 
 namespace StockInfo
 {
     public static class MailHelper
     {
-        public static bool SendEmail(List<string> recievers)
+        public static bool SendEmail(List<string> recievers, Results QuoteData, int portfolioCode)
         {
             string host = ConfigurationManager.AppSettings["host"];
             string sender = ConfigurationManager.AppSettings["usrName"];
             MailMessage msg = new MailMessage();
+            msg.IsBodyHtml = true;
             msg.From = new MailAddress(sender);
             foreach (var reciever in recievers)
             {
                 msg.To.Add(reciever);
             }
             msg.Subject = "Today's StockInfo";
-            msg.Body = CreateBody();
+            msg.Body = CreateBody(QuoteData, portfolioCode);
 
             Console.Write(msg.Body);
 
@@ -83,24 +85,17 @@ namespace StockInfo
             //}
         }
 
-        public static string CreateBody()
+        public static string CreateBody(Results QuoteData, int portfolioCode)
         {
-            List<string> Tickers = new List<string>();
-            using (StockDBContext db = new StockDBContext())
-            {
-                Tickers = db.Stocks.Select(s => s.Ticker).ToList();
-            }
-            Results QuoteData = QuoteDataFetcher.GetQuoteData(Tickers);
-
             QuoteData.quote = QuoteData.quote.OrderByDescending(q => decimal.Parse(q.ChangeinPercent.Remove(q.ChangeinPercent.Count()-1), CultureInfo.InvariantCulture)).ToList();
 
             string Body = "<h1>Dagens OMXS30</h1>";
             Body += "<table>";
             Body += "<tr>";
-            Body += "<th>Symbol</th>";
-            Body += "<th>Change (%)</th>";
-            Body += "<th>Change (SEK)</th>";
-            Body += "<th>Last Price (SEK)</th>";
+            Body += "<td>Symbol</td>";
+            Body += "<td>Change (%)</td>";
+            Body += "<td>Change (SEK)</td>";
+            Body += "<td>Last Price (SEK)</td>";
             Body += "</tr>";
 
             foreach (var quote in QuoteData.quote)
@@ -117,15 +112,14 @@ namespace StockInfo
             Body += "</table>";
 
             List<Quote> RicoschettQuotes = Calculator.CalculateRicoschettQuotes(QuoteData.quote);
-            Calculator.CalculateOwnedRicoschettQuotes(QuoteData.quote);
 
             Body += "<h1>Ricoschett-strategy<h1>";
             Body += "<table>";
             Body += "<tr>";
-            Body += "<th>Symbol</th>";
-            Body += "<th>Change (%)</th>";
-            Body += "<th>Change (SEK)</th>";
-            Body += "<th>Last Price (SEK)</th>";
+            Body += "<td>Symbol</td>";
+            Body += "<td>Change (%)</td>";
+            Body += "<td>Change (SEK)</td>";
+            Body += "<td>Last Price (SEK)</td>";
             Body += "</tr>";
             foreach (var quote in RicoschettQuotes)
             {
@@ -142,15 +136,16 @@ namespace StockInfo
 
             Quote qt;
             Body += "<h1>Ricoschett-portfolio<h1>";
-            List<StockQuote> OwnedQuotes = Storage.ListOwnedStockQuotes();
+            List<StockQuote> OwnedQuotes = Storage.ListOwnedStockQuotes(portfolioCode);
             Body += "<table>";
             Body += "<tr>";
-            Body += "<th>TradeDate: </th>";
-            Body += "<th>Symbol</th>";
-            Body += "<th>BoughtPrice</th>";
-            Body += "<th>LastPrice</th>";
-            Body += "<th>Last trade time</th>";
-            Body += "<th>Change (%)</th>";
+            Body += "<td>TradeDate: </td>";
+            Body += "<td>Symbol</td>";
+            Body += "<td>BoughtPrice</td>";
+            Body += "<td>LastPrice</td>";
+            Body += "<td>Last trade time</td>";
+            Body += "<td>Change (%)</td>";
+            Body += "<td>Value</td>";
             Body += "</tr>";
             foreach (var quote in OwnedQuotes)
             {
@@ -161,10 +156,28 @@ namespace StockInfo
                 Body += "<td>" + quote.Price + " SEK </td>";
                 Body += "<td>" + qt.LastTradePriceOnly + " SEK </td>";
                 Body += "<td>" + qt.LastTradeTime + " SEK</td>";
-                Body += "<td>" + (((decimal.Parse(qt.LastTradePriceOnly, CultureInfo.InvariantCulture) / quote.Price) - 1) * 100).ToString("N2") + " SEK</td>";
+                Body += "<td>" + (((decimal.Parse(qt.LastTradePriceOnly, CultureInfo.InvariantCulture) / quote.Price) - 1) * 100).ToString("N2") + "%</td>";
+                Body += "<td>" + quote.LastPrice * quote.Quantity + " SEK</td>";
                 Body += "</tr>";
                 //Body += "TradeDate: " + quote.DateBought.ToString("d") + " " + quote.Stock.Name + "\t BoughtPrice: " + quote.Price + "\t LastPrice:" + qt.LastTradePriceOnly + "SEK " + qt.LastTradeTime + "\tChange (%): " + (((decimal.Parse(qt.LastTradePriceOnly, CultureInfo.InvariantCulture) / quote.Price) - 1) * 100).ToString("N2") + "%\n";
             }
+            Body += "</table>";
+
+            Portfolio Portfolio = Storage.GetPortfolio(portfolioCode);
+            Body += "<h1>Total Portfolio Data<h1>";
+            Body += "<table>";
+            Body += "<tr>";
+            Body += "<td>Date</td>";
+            Body += "<td>Funds</td>";
+            Body += "<td>Invested</td>";
+            Body += "<td>Total value</td>";
+            Body += "</tr>";
+            Body += "<tr>";
+            Body += "<td>" + Portfolio.Date.ToString("d") + "</td>";
+            Body += "<td>" + Portfolio.Funds.ToString("N2") + "</td>";
+            Body += "<td>" + Portfolio.InvestedValue.ToString("N2") + "</td>";
+            Body += "<td>" + (Portfolio.InvestedValue + Portfolio.Funds).ToString("N2") + "</td>";
+            Body += "</tr>";
             Body += "</table>";
 
             Body += "<h1>Ricoschett - Latest deals<h1>";
@@ -172,11 +185,11 @@ namespace StockInfo
 
             Body += "<table>";
             Body += "<tr>";
-            Body += "<th>TradeDate: </th>";
-            Body += "<th>Symbol</th>";
-            Body += "<th>BoughtPrice</th>";
-            Body += "<th>Change (%)</th>";
-            Body += "<th>Change (SEK)</th>";
+            Body += "<td>TradeDate: </td>";
+            Body += "<td>Symbol</td>";
+            Body += "<td>BoughtPrice</td>";
+            Body += "<td>Change (%)</td>";
+            Body += "<td>Change (SEK)</td>";
             Body += "</tr>";
             foreach (var quote in FinisehdTradesQuotes)
             {
@@ -194,11 +207,11 @@ namespace StockInfo
             return Body;
         }
 
-        public static void CreateBodyToFile()
+        public static void CreateBodyToFile(Results QuoteData, int portfolioCode)
         {
-            string Body = CreateBody();
+            string Body = CreateBody(QuoteData, portfolioCode);
 
-            string path = @".\body.txt";
+            string path = @".\body.html";
 
             try
             {

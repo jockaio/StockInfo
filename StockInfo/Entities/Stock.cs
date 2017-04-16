@@ -1,4 +1,4 @@
-﻿namespace StockInfo
+﻿namespace StockInfo.Entities
 {
     public class Stock
     {

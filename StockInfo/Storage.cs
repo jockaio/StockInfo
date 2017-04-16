@@ -1,4 +1,5 @@
-﻿using System;
+﻿using StockInfo.Entities;
+using System;
 using System.Collections.Generic;
 using System.Data.Entity;
 using System.Linq;
@@ -23,12 +24,12 @@ namespace StockInfo
             }
         }
 
-        public static List<StockQuote> ListOwnedStockQuotes()
+        public static List<StockQuote> ListOwnedStockQuotes(int portfolioCode)
         {
             List<StockQuote> result = new List<StockQuote>();
             using (StockDBContext db = new StockDBContext())
             {
-                var groups = db.StockQuotes.Include("Stock").Where(s => DbFunctions.DiffDays(DateTime.Today, s.DateBought) < 5).ToList().GroupBy(s => s.StockID);
+                var groups = db.StockQuotes.Include("Stock").Where(s => /*DbFunctions.DiffDays(DateTime.Today, s.DateBought) < 5 && */ s.PortfolioCode == portfolioCode).ToList().GroupBy(s => s.StockID);
                 StockQuote sq = null;
                 foreach (var group in groups)
                 {
@@ -68,6 +69,64 @@ namespace StockInfo
             }
 
             return result;
+        }
+
+        public static Portfolio GetPortfolio(int PortfolioCode)
+        {
+            using (StockDBContext db = new StockDBContext())
+            {
+                return db.Portfolio.Where(p => p.PortfolioCode == PortfolioCode).OrderByDescending(p => p.Date).First();
+            }
+        }
+
+        public static decimal GetPortfolioFunds(int PortfolioCode)
+        {
+            using (StockDBContext db = new StockDBContext())
+            {
+                return db.Portfolio.Where(p => p.PortfolioCode == PortfolioCode).OrderByDescending(p => p.Date).First().Funds;
+            }
+        }
+
+        public static void UpdatePortfolioFunds(int PortfolioCode, decimal NewFunds)
+        {
+            using (StockDBContext db = new StockDBContext())
+            {
+                Portfolio portfolio = db.Portfolio.Where(p => p.PortfolioCode == PortfolioCode).OrderByDescending(p => p.Date).First();
+                if (portfolio.Date.Day != DateTime.Today.Day)
+                {
+                    Portfolio newPortfolio = portfolio;
+                    newPortfolio.Date = DateTime.Now;
+                    newPortfolio.Funds = NewFunds;
+                    db.Portfolio.Add(newPortfolio);
+                }
+                else
+                {
+                    portfolio.Funds = NewFunds;
+                }
+                
+                db.SaveChanges();
+            }
+        }
+
+        internal static void UpdatePortfolioInvestedValue(int PortfolioCode, decimal investedValue)
+        {
+            using (StockDBContext db = new StockDBContext())
+            {
+                Portfolio portfolio = db.Portfolio.Where(p => p.PortfolioCode == PortfolioCode).OrderByDescending(p => p.Date).First();
+                if (portfolio.Date.Day != DateTime.Today.Day)
+                {
+                    Portfolio newPortfolio = portfolio;
+                    newPortfolio.Date = DateTime.Now;
+                    newPortfolio.InvestedValue = investedValue;
+                    db.Portfolio.Add(newPortfolio);
+                }
+                else
+                {
+                    portfolio.InvestedValue = investedValue;
+                }
+                
+                db.SaveChanges();
+            }
         }
     }
 }

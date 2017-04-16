@@ -1,5 +1,7 @@
-﻿using System;
+﻿using StockInfo.Entities;
+using System;
 using System.Collections.Generic;
+using System.Configuration;
 using System.Linq;
 using System.Net;
 using System.Net.Mail;
@@ -13,9 +15,10 @@ namespace StockInfo
     {
         static void Main(string[] args)
         {
+            Results QuoteData = StockScanner.ScanStockMarket(StrategyType.Ricoschett);
+            MailHelper.SendEmail(new List<string> { "joakimhellerstrom@hotmail.com" }, QuoteData, Int32.Parse(ConfigurationManager.AppSettings["portfolioCode"]));
 
-            //MailHelper.SendEmail(new List<string> { "joakimhellerstrom@hotmail.com" });
-            MailHelper.CreateBodyToFile();
+            //MailHelper.CreateBodyToFile(QuoteData, Int32.Parse(ConfigurationManager.AppSettings["portfolioCode"]));
 
         }
     }

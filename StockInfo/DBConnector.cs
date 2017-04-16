@@ -1,4 +1,5 @@
 ﻿using MySql.Data.MySqlClient;
+using StockInfo.Entities;
 using System;
 using System.Collections.Generic;
 using System.Data.Entity;
@@ -27,6 +28,7 @@ namespace StockInfo
 
         public DbSet<StockQuote> StockQuotes { get; set; }
         public DbSet<Stock> Stocks { get; set; }
+        public DbSet<Portfolio> Portfolio { get; set; }
 
     }
 }

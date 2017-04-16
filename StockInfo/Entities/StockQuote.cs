@@ -3,7 +3,7 @@ using System.Linq;
 using System.ComponentModel.DataAnnotations.Schema;
 using System.Globalization;
 
-namespace StockInfo
+namespace StockInfo.Entities
 {
     public class StockQuote
     {
@@ -13,10 +13,13 @@ namespace StockInfo
         [ForeignKey("StockID")]
         public virtual Stock Stock { get; set; }
         public decimal Price { get; set; }
+        public decimal LastPrice { get; set; }
         public bool Owned { get; set; }
         public DateTime DateBought { get; set; }
         public StrategyType StrategyType { get; set; }
         public decimal? Change { get; set; }
+        public int Quantity { get; set; }
+        public int PortfolioCode { get; set; }
 
         public StockQuote() { }
 
@@ -24,6 +27,7 @@ namespace StockInfo
         {
             Created = DateTime.Now;
             Price = decimal.Parse(quote.LastTradePriceOnly, CultureInfo.InvariantCulture);
+            LastPrice = decimal.Parse(quote.LastTradePriceOnly, CultureInfo.InvariantCulture);
             using (StockDBContext db = new StockDBContext())
             {
                 Stock = db.Stocks.Where(s => s.Ticker == quote.Symbol).First();

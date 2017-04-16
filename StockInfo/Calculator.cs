@@ -1,4 +1,5 @@
-﻿using System;
+﻿using StockInfo.Entities;
+using System;
 using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
@@ -22,13 +23,6 @@ namespace StockInfo
                 if (LastPriceInRange / Range < 0.1m)
                 {
                     result.Add(Quote);
-                    //Buy the stock
-                    Storage.SaveStockQuote(new StockQuote(Quote)
-                    {
-                        DateBought = DateTime.Today,
-                        Owned = true,
-                        StrategyType = StrategyType.Ricoschett
-                    });
                 }
             }
 
@@ -36,31 +30,107 @@ namespace StockInfo
         }
 
         //Calculate if the owned Ricoschett Quotes should be sold or kept.
-        public static void CalculateOwnedRicoschettQuotes(List<Quote> Quotes)
+        public static void CalculateOwnedRicoschettQuotes(List<Quote> Quotes, int portfolioCode)
         {
             List<StockQuote> StockQuotes = null;
+            List<StockQuote> SoldStockQuotes = new List<StockQuote>();
             Quote quote = null;
             using (StockDBContext db = new StockDBContext())
             {
-                StockQuotes = db.StockQuotes.Where(s => s.Owned == true).ToList();
+                StockQuotes = Storage.ListOwnedStockQuotes(portfolioCode);
 
-                foreach (var sq in StockQuotes)
+                if (StockQuotes != null && StockQuotes.Count > 0)
                 {
-                    quote = Quotes.Where(q => q.Symbol.ToLower().Equals(sq.Stock.Ticker.ToLower())).First();
-                    if (decimal.Parse(quote.LastTradePriceOnly, CultureInfo.InvariantCulture) > sq.Price || ((DateTime.Today - sq.DateBought).TotalDays > 4))
-                    {
-                        StockQuote stockQuote = new StockQuote(quote)
-                        {
-                            DateBought = DateTime.Today,
-                            Owned = false,
-                            StrategyType = StrategyType.Ricoschett
-                        };
-                        stockQuote.Change = stockQuote.Price - sq.Price;
 
-                        Storage.SaveStockQuote(stockQuote);
+                    foreach (var sq in StockQuotes)
+                    {
+                        quote = Quotes.Where(q => q.Symbol.ToLower().Equals(sq.Stock.Ticker.ToLower())).First();
+                        if (decimal.Parse(quote.LastTradePriceOnly, CultureInfo.InvariantCulture) > sq.Price || ((DateTime.Today - sq.DateBought).TotalDays > 4))
+                        {
+                            StockQuote stockQuote = new StockQuote(quote)
+                            {
+                                DateBought = DateTime.Now,
+                                Owned = false,
+                                StrategyType = StrategyType.Ricoschett,
+                                Quantity = sq.Quantity,
+                                PortfolioCode = portfolioCode
+                            };
+                            stockQuote.Change = stockQuote.LastPrice - sq.Price;
+
+                            Storage.SaveStockQuote(stockQuote);
+                            SoldStockQuotes.Add(stockQuote);
+                        }
+                        else
+                        {
+                            db.StockQuotes.Where(s => s.ID == sq.ID).First().LastPrice = decimal.Parse(quote.LastTradePriceOnly, CultureInfo.InvariantCulture);
+                            db.SaveChanges();
+                        }
+                        
                     }
+
+                    if (SoldStockQuotes.Count > 0)
+                    {
+                        UpdatePortfolioFunds(SoldStockQuotes.Sum(s => s.Price * s.Quantity), 0, portfolioCode);
+                    }
+                    UpdatePortfolioInvestedValue(portfolioCode);
                 }
             }
+        }
+
+        public static void AllocatePortfolioFunds(List<Quote> quotes, int portfolioCode)
+        {
+            if (quotes.Count > 0)
+            {
+                quotes.OrderByDescending(q => decimal.Parse(q.ChangeinPercent.Remove(q.ChangeinPercent.Count() - 1), CultureInfo.InvariantCulture)).ToList();
+
+                List<StockQuote> sqs = new List<StockQuote>();
+
+                decimal AvailableFunds = Storage.GetPortfolioFunds(portfolioCode) / quotes.Count;
+
+                StockQuote sq = null;
+
+                foreach (var q in quotes)
+                {
+
+                    sq = new StockQuote(q)
+                    {
+                        DateBought = DateTime.Now,
+                        Owned = true,
+                        StrategyType = StrategyType.Ricoschett,
+                        PortfolioCode = portfolioCode,
+                    };
+
+                    if (sq.Price < AvailableFunds)
+                    {
+                        sq.Quantity = Convert.ToInt32(Math.Floor(AvailableFunds / sq.Price));
+                        sqs.Add(sq);
+                        //Buy the stock
+                        Storage.SaveStockQuote(sq);
+                    }
+                }
+
+                UpdatePortfolioFunds(0, sqs.Sum(s => s.Price * s.Quantity), portfolioCode);
+                UpdatePortfolioInvestedValue(portfolioCode);
+            }
+        }
+
+        public static void UpdatePortfolioFunds(decimal increase, decimal decrease, int portfolioCode)
+        {
+            if (increase > 0)
+            {
+                Storage.UpdatePortfolioFunds(39, Storage.GetPortfolioFunds(portfolioCode) + increase);
+            }
+
+            if (decrease > 0)
+            {
+                Storage.UpdatePortfolioFunds(39, Storage.GetPortfolioFunds(portfolioCode) - decrease);
+            }
+        }
+
+        public static void UpdatePortfolioInvestedValue(int portfolioCode)
+        {
+            decimal investedValue = Storage.ListOwnedStockQuotes(portfolioCode).Sum(s => s.LastPrice * s.Quantity);
+            Storage.UpdatePortfolioInvestedValue(39, investedValue);
         }
     }
 }
