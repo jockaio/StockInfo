@@ -26,9 +26,6 @@ namespace StockInfo
             return new StockDBContext();
         }
 
-        public DbSet<StockQuote> StockQuotes { get; set; }
         public DbSet<Stock> Stocks { get; set; }
-        public DbSet<Portfolio> Portfolio { get; set; }
-
     }
 }

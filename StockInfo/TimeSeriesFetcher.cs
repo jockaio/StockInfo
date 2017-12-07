@@ -24,11 +24,11 @@ namespace StockInfo
             }
         }
 
-        public static IntradayTimeSeries GetIntradayTimeSeries(string ticker, int interval)
+        public static IntradayTimeSeries GetIntradayTimeSeries(string ticker, int interval, OutputSizeType outputSizeType)
         {
             string url =
                 "https://www.alphavantage.co/query?function=TIME_SERIES_INTRADAY&symbol=" + ticker +
-                "&interval=" + interval + "min&outputsize=compact&apikey=TANIY6VHG6KO50WE";
+                "&interval=" + interval + "min&outputsize=" + outputSizeType.ToString() + "& apikey=TANIY6VHG6KO50WE";
 
             using (WebClient wc = new WebClient())
             {
@@ -36,6 +36,21 @@ namespace StockInfo
                 IntradayTimeSeries data = IntradayTimeSeries.FromJson(json);
                 return data;
             }
+        }
+
+        public static List<IntradayTimeSeries> ListIntradayTimeSeries(List<string> tickers, int interval, OutputSizeType outputSizeType)
+        {
+            List<IntradayTimeSeries> result = new List<IntradayTimeSeries>();
+            foreach (var ticker in tickers)
+            {
+                IntradayTimeSeries its = GetIntradayTimeSeries(ticker, interval, outputSizeType);
+                if (its.MetaData != null && its.TimeSeries != null && its.TimeSeries.Count > 0)
+                {
+                    result.Add(its);
+                }
+            }
+
+            return result;
         }
     }
 }

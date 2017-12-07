@@ -69,9 +69,9 @@
     <Compile Include="DBConnector.cs" />
     <Compile Include="Entities\IntradayTimeSeries.cs" />
     <Compile Include="Entities\DailyTimeSeries.cs" />
-    <Compile Include="Entities\Portfolio.cs" />
     <Compile Include="Entities\Serializer.cs" />
-    <Compile Include="Enum.cs" />
+    <Compile Include="Entities\Enum.cs" />
+    <Compile Include="Entities\Stock.cs" />
     <Compile Include="MailHelper.cs" />
     <Compile Include="Migrations\201703252332598_Initial.cs" />
     <Compile Include="Migrations\201703252332598_Initial.Designer.cs">
@@ -84,13 +84,9 @@
     <Compile Include="Migrations\Configuration.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="Entities\Quote.cs" />
-    <Compile Include="QuoteDataFetcher.cs" />
-    <Compile Include="Entities\Stock.cs" />
-    <Compile Include="Entities\StockQuote.cs" />
     <Compile Include="StockScanner.cs" />
     <Compile Include="TimeSeriesFetcher.cs" />
-    <Compile Include="Storage.cs" />
+    <Compile Include="DB\Storage.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config">

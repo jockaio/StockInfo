@@ -1,9 +1,13 @@
-﻿namespace StockInfo.Entities
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+
+namespace StockInfo.Entities
 {
-    public class Stock
+    class Stock
     {
-        public int ID { get; set; }
-        public string Name { get; set; }
-        public string Ticker { get; set; }
+        int ID
     }
 }
