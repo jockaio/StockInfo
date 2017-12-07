@@ -6,8 +6,10 @@ using System.Threading.Tasks;
 
 namespace StockInfo.Entities
 {
-    class Stock
+    public class Stock
     {
-        int ID
+        public int ID { get; set; }
+        public string Name { get; set; }
+        public string Ticker { get; set; }
     }
 }
