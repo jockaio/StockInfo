@@ -10,11 +10,11 @@ namespace StockInfo
 {
     public static class TimeSeriesFetcher
     {
-        public static DailyTimeSeries GetDailyAdjustedTimeSeries(string ticker)
+        public static DailyTimeSeries GetDailyAdjustedTimeSeries(string ticker, OutputSizeType outputSizeType)
         {
             string url =
                 "https://www.alphavantage.co/query?function=TIME_SERIES_DAILY_ADJUSTED&symbol=" + ticker +
-                "&outputsize=compact&apikey=TANIY6VHG6KO50WE";
+                "&outputsize=" + outputSizeType + "& apikey=TANIY6VHG6KO50WE";
 
             using (WebClient wc = new WebClient())
             {
@@ -47,6 +47,21 @@ namespace StockInfo
                 if (its.MetaData != null && its.TimeSeries != null && its.TimeSeries.Count > 0)
                 {
                     result.Add(its);
+                }
+            }
+
+            return result;
+        }
+
+        public static List<DailyTimeSeries> ListDailyAdjustedTimeSeries(List<string> tickers, OutputSizeType outputSizeType)
+        {
+            List<DailyTimeSeries> result = new List<DailyTimeSeries>();
+            foreach (var ticker in tickers)
+            {
+                DailyTimeSeries dts = GetDailyAdjustedTimeSeries(ticker, outputSizeType);
+                if (dts.MetaData != null && dts.TimeSeries != null && dts.TimeSeries.Count > 0)
+                {
+                    result.Add(dts);
                 }
             }
 

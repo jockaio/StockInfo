@@ -7,7 +7,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace StockInfo
+namespace StockInfo.DB
 {
     public class StockDBContext : DbContext
     {

@@ -66,7 +66,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Calculator.cs" />
-    <Compile Include="DBConnector.cs" />
+    <Compile Include="DB\DBConnector.cs" />
     <Compile Include="Entities\IntradayTimeSeries.cs" />
     <Compile Include="Entities\DailyTimeSeries.cs" />
     <Compile Include="Entities\Serializer.cs" />

@@ -1,4 +1,5 @@
-﻿using StockInfo.Entities;
+﻿using StockInfo.DB;
+using StockInfo.Entities;
 using System;
 using System.Collections.Generic;
 using System.Configuration;
@@ -11,51 +12,46 @@ namespace StockInfo
 {
     public static class StockScanner
     {
-        public static Results ScanStockMarket(StrategyType StrategyType)
-        {
-            Results result = null; 
-            switch (StrategyType)
-            {
-                case StrategyType.Ricoschett:
-                    result = ScanForRicoschett();
-                    break;
-                default:
-                    break;
-            }
+        //public static Results ScanStockMarket(StrategyType StrategyType)
+        //{
+        //    Results result = null; 
+        //    switch (StrategyType)
+        //    {
+        //        case StrategyType.Ricoschett:
+        //            result = ScanForRicoschett();
+        //            break;
+        //        default:
+        //            break;
+        //    }
 
-            return result;
-        }
+        //    return result;
+        //}
 
-        public static List<Results> ScanHistoryOfStock(DateTime startDate, DateTime endDate)
+        //public static List<Results> ScanHistoryOfStock(DateTime startDate, DateTime endDate)
+        //{
+        //    List<string> Tickers = new List<string>();
+        //    using (StockDBContext db = new StockDBContext())
+        //    {
+        //        Tickers = db.Stocks.Select(s => s.Ticker).ToList();
+        //    }
+        //    List<Results> result = QuoteDataFetcher.GetHistoricQuoteData(Tickers, startDate, endDate);
+
+        //    return result;
+        //}
+
+        private static List<DailyTimeSeries> ScanForRicoschett()
         {
-            List<string> Tickers = new List<string>();
+            List<string> tickers = new List<string>();
             using (StockDBContext db = new StockDBContext())
             {
-                Tickers = db.Stocks.Select(s => s.Ticker).ToList();
+                tickers = db.Stocks.Select(s => s.Ticker).ToList();
             }
-            List<Results> result = QuoteDataFetcher.GetHistoricQuoteData(Tickers, startDate, endDate);
 
-            return result;
-        }
+            List<DailyTimeSeries> dts = TimeSeriesFetcher.ListDailyAdjustedTimeSeries(tickers, OutputSizeType.Compact);
 
-        private static Results ScanForRicoschett()
-        {
-            List<string> Tickers = new List<string>();
-            using (StockDBContext db = new StockDBContext())
-            {
-                Tickers = db.Stocks.Select(s => s.Ticker).ToList();
-            }
-            Results QuoteData = QuoteDataFetcher.GetQuoteData(Tickers);
+            List<DailyTimeSeries> todaysRicoschetts = Calculator.CalculateRicoschettQuotes(dts);
 
-            QuoteData.quote = QuoteData.quote.OrderByDescending(q => decimal.Parse(q.ChangeinPercent.Remove(q.ChangeinPercent.Count() - 1), CultureInfo.InvariantCulture)).ToList();
-
-            //Check owned stocks against todays data.
-            Calculator.CalculateOwnedRicoschettQuotes(QuoteData.quote, Int32.Parse(ConfigurationManager.AppSettings["portfolioCode"]));
-
-            List<Quote> TodaysRicoschetts = Calculator.CalculateRicoschettQuotes(QuoteData.quote);
-            Calculator.AllocatePortfolioFunds(TodaysRicoschetts, Int32.Parse(ConfigurationManager.AppSettings["portfolioCode"]));
-
-            return QuoteData;
+            return todaysRicoschetts;
         }
     }
 }

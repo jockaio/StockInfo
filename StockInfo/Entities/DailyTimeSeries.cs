@@ -18,7 +18,7 @@ namespace StockInfo.Entities
         public DailyMetaData MetaData { get; set; }
 
         [JsonProperty("Time Series (Daily)")]
-        public Dictionary<DateTime, TimeSeriesData> TimeSeriesDaily { get; set; }
+        public Dictionary<DateTime, TimeSeriesData> TimeSeries { get; set; }
     }
 
     public partial class TimeSeriesData

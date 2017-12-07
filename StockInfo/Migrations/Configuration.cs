@@ -4,8 +4,10 @@ namespace StockInfo.Migrations
     using System.Data.Entity;
     using System.Data.Entity.Migrations;
     using System.Linq;
+    using StockInfo.DB;
 
-    internal sealed class Configuration : DbMigrationsConfiguration<StockInfo.StockDBContext>
+
+    internal sealed class Configuration : DbMigrationsConfiguration<StockDBContext>
     {
         public Configuration()
         {
@@ -13,7 +15,7 @@ namespace StockInfo.Migrations
             AutomaticMigrationsEnabled = false;
         }
 
-        protected override void Seed(StockInfo.StockDBContext context)
+        protected override void Seed(StockDBContext context)
         {
             //  This method will be called after migrating to the latest version.
 

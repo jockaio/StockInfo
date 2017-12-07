@@ -20,9 +20,6 @@ namespace StockInfo
             //StockScanner.ScanHistoryOfStock(new DateTime(2017, 9, 1), DateTime.Now);
             //MailHelper.CreateBodyToFile(QuoteData, Int32.Parse(ConfigurationManager.AppSettings["portfolioCode"]));
             //DailyTimeSeries data = StockTimeSeriesFetcher.GetDailyAdjustedTimeSeries("ABB.ST");
-            IntradayTimeSeries data = TimeSeriesFetcher.GetIntradayTimeSeries("ABB.ST", 15);
-            data = null;
-
         }
     }
 }
