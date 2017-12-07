@@ -26,6 +26,18 @@ namespace StockInfo
             return result;
         }
 
+        public static List<Results> ScanHistoryOfStock(DateTime startDate, DateTime endDate)
+        {
+            List<string> Tickers = new List<string>();
+            using (StockDBContext db = new StockDBContext())
+            {
+                Tickers = db.Stocks.Select(s => s.Ticker).ToList();
+            }
+            List<Results> result = QuoteDataFetcher.GetHistoricQuoteData(Tickers, startDate, endDate);
+
+            return result;
+        }
+
         private static Results ScanForRicoschett()
         {
             List<string> Tickers = new List<string>();

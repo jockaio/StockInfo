@@ -49,6 +49,9 @@
       <HintPath>..\packages\MySql.Data.Entity.6.9.9\lib\net45\MySql.Data.Entity.EF6.dll</HintPath>
       <Private>True</Private>
     </Reference>
+    <Reference Include="Newtonsoft.Json, Version=10.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
+      <HintPath>..\packages\Newtonsoft.Json.10.0.3\lib\net45\Newtonsoft.Json.dll</HintPath>
+    </Reference>
     <Reference Include="System" />
     <Reference Include="System.ComponentModel.DataAnnotations" />
     <Reference Include="System.configuration" />
@@ -64,7 +67,10 @@
   <ItemGroup>
     <Compile Include="Calculator.cs" />
     <Compile Include="DBConnector.cs" />
+    <Compile Include="Entities\IntradayTimeSeries.cs" />
+    <Compile Include="Entities\DailyTimeSeries.cs" />
     <Compile Include="Entities\Portfolio.cs" />
+    <Compile Include="Entities\Serializer.cs" />
     <Compile Include="Enum.cs" />
     <Compile Include="MailHelper.cs" />
     <Compile Include="Migrations\201703252332598_Initial.cs" />
@@ -83,6 +89,7 @@
     <Compile Include="Entities\Stock.cs" />
     <Compile Include="Entities\StockQuote.cs" />
     <Compile Include="StockScanner.cs" />
+    <Compile Include="TimeSeriesFetcher.cs" />
     <Compile Include="Storage.cs" />
   </ItemGroup>
   <ItemGroup>
