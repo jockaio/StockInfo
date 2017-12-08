@@ -12,20 +12,36 @@ namespace StockInfo
 {
     public static class StockScanner
     {
-        //public static Results ScanStockMarket(StrategyType StrategyType)
-        //{
-        //    Results result = null; 
-        //    switch (StrategyType)
-        //    {
-        //        case StrategyType.Ricoschett:
-        //            result = ScanForRicoschett();
-        //            break;
-        //        default:
-        //            break;
-        //    }
+        public static List<DailyTimeSeries> ScanStockMarket(StrategyType StrategyType)
+        {
+            List<DailyTimeSeries> result = null;
+            switch (StrategyType)
+            {
+                case StrategyType.Ricoschett:
+                    result = ScanForRicoschett();
+                    break;
+                case StrategyType.All:
+                    result = GetAllStocks();
+                    break;
+                default:
+                    break;
+            }
 
-        //    return result;
-        //}
+            return result;
+        }
+
+        private static List<DailyTimeSeries> GetAllStocks()
+        {
+            List<string> tickers = new List<string>();
+            using (StockDBContext db = new StockDBContext())
+            {
+                tickers = db.Stocks.Select(s => s.Ticker).ToList();
+            }
+
+            List<DailyTimeSeries> dts = TimeSeriesFetcher.ListDailyAdjustedTimeSeries(tickers, OutputSizeType.Compact);
+
+            return dts;
+        }
 
         //public static List<Results> ScanHistoryOfStock(DateTime startDate, DateTime endDate)
         //{

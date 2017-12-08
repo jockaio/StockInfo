@@ -15,11 +15,12 @@ namespace StockInfo
     {
         static void Main(string[] args)
         {
-            //Results QuoteData = StockScanner.ScanStockMarket(StrategyType.Ricoschett);
             //MailHelper.SendEmail(new List<string> { "joakimhellerstrom@hotmail.com" }, QuoteData, Int32.Parse(ConfigurationManager.AppSettings["portfolioCode"]));
             //StockScanner.ScanHistoryOfStock(new DateTime(2017, 9, 1), DateTime.Now);
-            //MailHelper.CreateBodyToFile(QuoteData, Int32.Parse(ConfigurationManager.AppSettings["portfolioCode"]));
+            List<DailyTimeSeries> result = StockScanner.ScanStockMarket(StrategyType.All);
+            MailHelper.CreateBodyToFile(result);
             //DailyTimeSeries data = StockTimeSeriesFetcher.GetDailyAdjustedTimeSeries("ABB.ST");
+
         }
     }
 }

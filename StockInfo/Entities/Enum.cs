@@ -8,7 +8,8 @@ namespace StockInfo.Entities
 {
     public enum StrategyType
     {
-        Ricoschett
+        Ricoschett,
+        All
     }
 
     public enum OutputSizeType

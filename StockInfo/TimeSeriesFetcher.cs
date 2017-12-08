@@ -14,7 +14,7 @@ namespace StockInfo
         {
             string url =
                 "https://www.alphavantage.co/query?function=TIME_SERIES_DAILY_ADJUSTED&symbol=" + ticker +
-                "&outputsize=" + outputSizeType + "& apikey=TANIY6VHG6KO50WE";
+                "&outputsize=" + outputSizeType + "&apikey=TANIY6VHG6KO50WE";
 
             using (WebClient wc = new WebClient())
             {

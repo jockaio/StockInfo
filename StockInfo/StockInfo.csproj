@@ -73,13 +73,9 @@
     <Compile Include="Entities\Enum.cs" />
     <Compile Include="Entities\Stock.cs" />
     <Compile Include="MailHelper.cs" />
-    <Compile Include="Migrations\201703252332598_Initial.cs" />
-    <Compile Include="Migrations\201703252332598_Initial.Designer.cs">
-      <DependentUpon>201703252332598_Initial.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Migrations\201703260026236_dbupdate.cs" />
-    <Compile Include="Migrations\201703260026236_dbupdate.Designer.cs">
-      <DependentUpon>201703260026236_dbupdate.cs</DependentUpon>
+    <Compile Include="Migrations\201712082229518_dbupdate.cs" />
+    <Compile Include="Migrations\201712082229518_dbupdate.Designer.cs">
+      <DependentUpon>201712082229518_dbupdate.cs</DependentUpon>
     </Compile>
     <Compile Include="Migrations\Configuration.cs" />
     <Compile Include="Program.cs" />
@@ -95,11 +91,8 @@
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
-    <EmbeddedResource Include="Migrations\201703252332598_Initial.resx">
-      <DependentUpon>201703252332598_Initial.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Migrations\201703260026236_dbupdate.resx">
-      <DependentUpon>201703260026236_dbupdate.cs</DependentUpon>
+    <EmbeddedResource Include="Migrations\201712082229518_dbupdate.resx">
+      <DependentUpon>201712082229518_dbupdate.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
