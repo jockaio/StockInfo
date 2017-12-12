@@ -104,11 +104,11 @@ namespace StockInfo
             {
                 Body += "<tr>";
                 Body += "<td>" + dt.MetaData.Symbol + "</td>";
-                Body += "<td>" + (dt.TimeSeries.First().Value.Close - dt.TimeSeries.First().Value.Open) / dt.TimeSeries.First().Value.Open + "%</td>";
-                Body += "<td>" + (dt.TimeSeries.First().Value.Close - dt.TimeSeries.First().Value.Open) + " SEK </td>";
-                Body += "<td>" + (dt.TimeSeries.First().Value.High) + " SEK </td>";
-                Body += "<td>" + (dt.TimeSeries.First().Value.Low) + " SEK </td>";
-                Body += "<td>" + (dt.TimeSeries.First().Value.Close) + " SEK</td>";
+                Body += "<td>" + (((dt.TimeSeries.First().Value.Close - dt.TimeSeries.First().Value.Open) / dt.TimeSeries.First().Value.Open) * 100).ToString("N2") + "%</td>";
+                Body += "<td>" + (dt.TimeSeries.First().Value.Close - dt.TimeSeries.First().Value.Open).ToString("N2") + " SEK </td>";
+                Body += "<td>" + (dt.TimeSeries.First().Value.High).ToString("N2") + " SEK </td>";
+                Body += "<td>" + (dt.TimeSeries.First().Value.Low).ToString("N2") + " SEK </td>";
+                Body += "<td>" + (dt.TimeSeries.First().Value.Close).ToString("N2") + " SEK</td>";
                 Body += "</tr>";
             }
 
@@ -130,11 +130,11 @@ namespace StockInfo
             {
                 Body += "<tr>";
                 Body += "<td>" + dt.MetaData.Symbol + "</td>";
-                Body += "<td>" + (dt.TimeSeries.First().Value.Close - dt.TimeSeries.First().Value.Open) / dt.TimeSeries.First().Value.Open + "%</td>";
-                Body += "<td>" + (dt.TimeSeries.First().Value.Close - dt.TimeSeries.First().Value.Open) + " SEK </td>";
-                Body += "<td>" + (dt.TimeSeries.First().Value.High) + " SEK </td>";
-                Body += "<td>" + (dt.TimeSeries.First().Value.Low) + " SEK </td>";
-                Body += "<td>" + (dt.TimeSeries.First().Value.Close) + " SEK</td>";
+                Body += "<td>" + (((dt.TimeSeries.First().Value.Close - dt.TimeSeries.First().Value.Open) / dt.TimeSeries.First().Value.Open) * 100).ToString("N2") + "%</td>";
+                Body += "<td>" + (dt.TimeSeries.First().Value.Close - dt.TimeSeries.First().Value.Open).ToString("N2") + " SEK </td>";
+                Body += "<td>" + (dt.TimeSeries.First().Value.High).ToString("N2") + " SEK </td>";
+                Body += "<td>" + (dt.TimeSeries.First().Value.Low).ToString("N2") + " SEK </td>";
+                Body += "<td>" + (dt.TimeSeries.First().Value.Close).ToString("N2") + " SEK</td>";
                 Body += "</tr>";
                 //Body += quote.Symbol + "\t " + quote.ChangeinPercent + "\t " + quote.Change + "SEK" + "\t " + quote.LastTradePriceOnly + "SEK " + quote.LastTradeTime + "\n";
             }

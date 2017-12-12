@@ -69,13 +69,27 @@
     <Compile Include="DB\DBConnector.cs" />
     <Compile Include="Entities\IntradayTimeSeries.cs" />
     <Compile Include="Entities\DailyTimeSeries.cs" />
+    <Compile Include="Entities\Portfolio.cs" />
     <Compile Include="Entities\Serializer.cs" />
     <Compile Include="Entities\Enum.cs" />
     <Compile Include="Entities\Stock.cs" />
+    <Compile Include="Entities\TimeSeriesDataInfo.cs" />
     <Compile Include="MailHelper.cs" />
     <Compile Include="Migrations\201712082229518_dbupdate.cs" />
     <Compile Include="Migrations\201712082229518_dbupdate.Designer.cs">
       <DependentUpon>201712082229518_dbupdate.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\201712082329269_dbupdate1.cs" />
+    <Compile Include="Migrations\201712082329269_dbupdate1.Designer.cs">
+      <DependentUpon>201712082329269_dbupdate1.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\201712082332091_dbupdate2.cs" />
+    <Compile Include="Migrations\201712082332091_dbupdate2.Designer.cs">
+      <DependentUpon>201712082332091_dbupdate2.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\201712121732426_dbupdate3.cs" />
+    <Compile Include="Migrations\201712121732426_dbupdate3.Designer.cs">
+      <DependentUpon>201712121732426_dbupdate3.cs</DependentUpon>
     </Compile>
     <Compile Include="Migrations\Configuration.cs" />
     <Compile Include="Program.cs" />
@@ -93,6 +107,15 @@
   <ItemGroup>
     <EmbeddedResource Include="Migrations\201712082229518_dbupdate.resx">
       <DependentUpon>201712082229518_dbupdate.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201712082329269_dbupdate1.resx">
+      <DependentUpon>201712082329269_dbupdate1.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201712082332091_dbupdate2.resx">
+      <DependentUpon>201712082332091_dbupdate2.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201712121732426_dbupdate3.resx">
+      <DependentUpon>201712121732426_dbupdate3.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

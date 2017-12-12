@@ -10,6 +10,7 @@ namespace StockInfo.DB
 {
     public static class Storage
     {
+
         //public static void SaveStockQuote(StockQuote stockQuote)
         //{
         //    using (StockDBContext db = new StockDBContext())

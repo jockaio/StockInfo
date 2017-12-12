@@ -27,5 +27,6 @@ namespace StockInfo.DB
         }
 
         public DbSet<Stock> Stocks { get; set; }
+        public DbSet<TimeSeriesDataInfo> TimeSeriesDataInfos { get; set; }
     }
 }
