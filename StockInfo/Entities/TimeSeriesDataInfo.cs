@@ -28,5 +28,16 @@ namespace StockInfo.Entities
             TimeStamp = dts.TimeSeries.First().Key;
             TimeStampFetched = DateTime.Now;
         }
+        public TimeSeriesDataInfo(DailyTimeSeries dts, DateTime date)
+        {
+            TimeSeriesData = dts.TimeSeries.Where(t => t.Key == date).First().Value;
+            using (StockDBContext db = new StockDBContext())
+            {
+                Stock = db.Stocks.Where(s => s.Ticker == dts.MetaData.Symbol).First();
+                StockID = Stock.ID;
+            }
+            TimeStamp = dts.TimeSeries.First().Key;
+            TimeStampFetched = DateTime.Now;
+        }
     }
 }

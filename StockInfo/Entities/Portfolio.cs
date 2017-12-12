@@ -8,5 +8,7 @@ namespace StockInfo.Entities
 {
     class Portfolio
     {
+        public decimal Funds { get; set; }
+        public List<Stock> OwnedStocks { get; set; }
     }
 }

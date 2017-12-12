@@ -19,6 +19,15 @@ namespace StockInfo.Entities
 
         [JsonProperty("Time Series (Daily)")]
         public Dictionary<DateTime, TimeSeriesData> TimeSeries { get; set; }
+
+        public TradeInfo TradeInfo { get; set; }
+    }
+
+    public class TradeInfo
+    {
+        public DateTime BoughtDate { get; set; }
+        public decimal BoughtPrice { get; set; }
+        public TimeSeriesData TimeSeriesData { get; set; }
     }
 
     public partial class TimeSeriesData

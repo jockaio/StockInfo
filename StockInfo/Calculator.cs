@@ -10,21 +10,89 @@ namespace StockInfo
 {
     public static class Calculator
     {
-        public static List<DailyTimeSeries> CalculateRicoschettQuotes(List<DailyTimeSeries> timeSeries)
+        public static List<DailyTimeSeries> CalculateRicoschettQuotes(List<DailyTimeSeries> timeSeries, DateTime? checkDate = null)
         {
             List<DailyTimeSeries> result = new List<DailyTimeSeries>();
+
+            if (!checkDate.HasValue)
+            {
+                checkDate = DateTime.Today;
+            }
+
+            foreach (var ts in timeSeries)
+            {
+                if (CheckIfRicoschett(ts, checkDate.Value))
+                {
+                    ts.TradeInfo = new TradeInfo();
+                    ts.TradeInfo.TimeSeriesData = ts.TimeSeries.Where(t => t.Key.Equals(checkDate)).First().Value;
+                    ts.TradeInfo.BoughtDate = checkDate.Value;
+                    ts.TradeInfo.BoughtPrice = ts.TimeSeries.Where(t => t.Key.Equals(checkDate)).First().Value.Close;
+                    result.Add(ts);
+                }
+            }
+
+            return result;
+        }
+
+        public static bool CheckIfRicoschett(DailyTimeSeries dts, DateTime checkDate)
+        {
+            bool result = false;
             decimal Range;
             decimal LastPriceInRange;
             TimeSeriesData data = null;
 
-            foreach (var ts in timeSeries)
+            if (dts.TimeSeries.Any(k => k.Key.Equals(checkDate)))
             {
-                data = ts.TimeSeries.First().Value;
+                data = dts.TimeSeries.Where(k => k.Key.Equals(checkDate)).First().Value;
                 Range = data.High - data.Low;
                 LastPriceInRange = data.Close - data.Low;
                 if (LastPriceInRange / Range < 0.1m)
                 {
-                    result.Add(ts);
+                    result = true;
+                }
+            }
+
+            return result;
+        }
+
+        public static List<DailyTimeSeries> CalculateOwnedRicoschettQuotes(List<DailyTimeSeries> timeSeries, DateTime? checkDate = null)
+        {
+            List<DailyTimeSeries> result = new List<DailyTimeSeries>();
+
+            if (!checkDate.HasValue)
+            {
+                checkDate = DateTime.Today;
+            }
+
+            foreach (var ts in timeSeries)
+            {
+                if (ts.TradeInfo != null && ts.TradeInfo.BoughtDate != null)
+                {
+                    if (CheckIfOwnedRicoschettShouldBeSold(ts, checkDate.Value))
+                    {
+                        result.Add(ts);
+                    }
+                }
+            }
+
+            return result;
+        }
+
+        public static bool CheckIfOwnedRicoschettShouldBeSold(DailyTimeSeries dts, DateTime checkDate)
+        {
+            bool result = false;
+            if (dts.TradeInfo != null && dts.TradeInfo.BoughtDate != null && dts.TradeInfo.BoughtPrice != 0)
+            {
+
+                if ((checkDate - dts.TradeInfo.BoughtDate).TotalDays > 4)
+                {
+                    result = true;
+                }
+
+                decimal currentPrice = dts.TimeSeries.Where(t => t.Key.Equals(checkDate)).First().Value.Close;
+                if (dts.TradeInfo.BoughtPrice < currentPrice)
+                {
+                    result = true;
                 }
             }
 
@@ -67,7 +135,7 @@ namespace StockInfo
         //                    db.StockQuotes.Where(s => s.ID == sq.ID).First().LastPrice = decimal.Parse(quote.LastTradePriceOnly, CultureInfo.InvariantCulture);
         //                    db.SaveChanges();
         //                }
-                        
+
         //            }
 
         //            if (SoldStockQuotes.Count > 0)
